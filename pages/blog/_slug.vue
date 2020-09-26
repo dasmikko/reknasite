@@ -1,14 +1,21 @@
 <template>
   <article>
-    <h1>{{ page.title }}</h1>
+    <h1>Blog</h1>
+    <h2>{{ page.title }}</h2>
+    <span>Posted: {{page.date}}</span>
     <nuxt-content :document="page" />
   </article>
 </template>
 
 <script>
 export default {
-  async asyncData ({ $content }) {
-    const page = await $content('home').fetch()
+  async asyncData ({ $content, params, error }) {
+    const slug = params.slug || "index";
+    const page = await $content('blogs/' + slug)
+        .fetch()
+        .catch(err => {
+          error({ statusCode: 404, message: "Page not found" });
+        });
 
     return {
       page
